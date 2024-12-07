@@ -19,7 +19,7 @@ export const MainFlowContext = React.createContext<MainFlowStateType | null>(
 
 const MainFlowState = (navigation, apiService): MainFlowStateType => {
   const onSplashScreenDone = () => {
-    navigation.navigate('GIFBrowserScreen');
+    navigation.navigate('MainFlow', { screen: 'GIFBrowserScreen' } );
   };
 
   return {

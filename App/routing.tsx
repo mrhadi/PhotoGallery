@@ -13,6 +13,7 @@ function RootStack() {
         <MainStack.Screen
           name="MainFlow"
           component={MainFlow}
+          options={{ headerShown: false }}
         />
       </MainStack.Navigator>
     </NavigationContainer>
