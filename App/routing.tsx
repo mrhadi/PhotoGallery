@@ -1,14 +1,15 @@
 import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, createNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { MainFlow } from './flow';
 
 const MainStack = createNativeStackNavigator();
+export const navigationRef = createNavigationContainerRef();
 
 function RootStack() {
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <MainStack.Navigator initialRouteName="MainFlow">
         <MainStack.Screen
           name="MainFlow"

@@ -7,9 +7,11 @@ function SplashScreen() {
   const mainFlow: MainFlowStateType = useContext(MainFlowContext);
 
   useEffect(() => {
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       mainFlow.onSplashScreenDone();
     }, 2000);
+
+    return () => clearTimeout(timeoutId);
   });
 
   return (
