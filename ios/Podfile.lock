@@ -1242,6 +1242,10 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - react-native-config (1.5.3):
+    - react-native-config/App (= 1.5.3)
+  - react-native-config/App (1.5.3):
+    - React-Core
   - React-nativeconfig (0.76.4)
   - React-NativeModulesApple (0.76.4):
     - glog
@@ -1550,6 +1554,7 @@ DEPENDENCIES:
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - React-Mapbuffer (from `../node_modules/react-native/ReactCommon`)
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
+  - react-native-config (from `../node_modules/react-native-config`)
   - React-nativeconfig (from `../node_modules/react-native/ReactCommon`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -1655,6 +1660,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   React-microtasksnativemodule:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
+  react-native-config:
+    :path: "../node_modules/react-native-config"
   React-nativeconfig:
     :path: "../node_modules/react-native/ReactCommon"
   React-NativeModulesApple:
@@ -1748,6 +1755,7 @@ SPEC CHECKSUMS:
   React-logger: 09934f68c9c8bf4b427addd641f4cae341564d61
   React-Mapbuffer: 6385e4446caaaa433decaa94f398ad3f593cfc05
   React-microtasksnativemodule: e5e9a87d630359490359f7143215987254af65a8
+  react-native-config: ea75335a7cca1d3326de1da384227e580a7c082e
   React-nativeconfig: 2199ff468fce8b95d1776d9cea31d35076fe7e48
   React-NativeModulesApple: 3fd0069e45be0a560ed52f57ce8d8c42898f69b8
   React-perflogger: ab4e872853e59282b94df46f17c84d83290579e4

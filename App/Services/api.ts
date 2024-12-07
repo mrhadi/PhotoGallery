@@ -1,7 +1,10 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { logConsole, logError } from './LogTracker.ts';
+import { createContext } from 'react';
+import axios, { AxiosInstance } from 'axios';
 
-const BASE_URL = 'https://api.giphy.com/v1/gifs/trending';
+import { logConsole, logError } from './LogTracker.ts';
+import ENV from './env';
+
+const BASE_URL = ENV.BASE_API_URL;
 
 const ApiService = () => {
   const client: AxiosInstance = axios.create({
@@ -20,11 +23,11 @@ const ApiService = () => {
         `API Error:${error?.message} Url:\x1b[31m${
           error?.config?.url
         }\x1b[0m Data:${JSON.stringify(error?.response?.data)}`
-      )
+      );
 
       return Promise.reject(error);
     }
-  )
+  );
   client.interceptors.response.use(
     config => {
       return config;
@@ -39,6 +42,17 @@ const ApiService = () => {
       return Promise.reject(error);
     }
   );
+
+  const getTrending = async () => {
+    const url = `trending?api_key=${ENV.API_KEY}&limit=15`;
+    return client.get(url);
+  };
+
+  return {
+    getTrending,
+  };
 };
 
-export default ApiService
+export const ApiServiceContext = createContext<typeof ApiService>(null);
+
+export default ApiService;
