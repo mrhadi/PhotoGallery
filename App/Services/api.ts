@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+//import { createContext } from 'react';
 import axios, { AxiosInstance } from 'axios';
 import applyCaseMiddleware from 'axios-case-converter';
 
@@ -44,16 +44,22 @@ const ApiService = () => {
     }
   );
 
-  const getTrending = async (offset: number = 0,maxGIFPerLoad: number = 15) => {
-    const url = `trending?apiKey=${ENV.API_KEY}&offset=${offset}&limit=${maxGIFPerLoad}`;
+  const getTrending = async (offset: number = 0, maxGIFPerLoad: number) => {
+    const url = `/trending?apiKey=${ENV.API_KEY}&offset=${offset}&limit=${maxGIFPerLoad}`;
+    return client.get(url);
+  };
+
+  const searchGIFs = async (query: string, offset: number = 0, maxGIFPerLoad: number) => {
+    const url = `/search?apiKey=${ENV.API_KEY}&offset=${offset}&q=${query}&limit=${maxGIFPerLoad}`;
     return client.get(url);
   };
 
   return {
     getTrending,
+    searchGIFs,
   };
 };
 
-export const ApiServiceContext = createContext<typeof ApiService>(null);
+//export const ApiServiceContext = createContext<typeof ApiService>(null);
 
 export default ApiService;

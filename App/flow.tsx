@@ -26,6 +26,7 @@ export type MainFlowStateType = {
   init: Function
   getGIFData: Function
   loadMoreData: Function
+  onSearchGIF: Function
 }
 
 export type LocalDataType = {
@@ -80,6 +81,17 @@ const MainFlowState = (navigation, apiService): MainFlowStateType => {
     localData.gifData.push(...data);
   };
 
+  const searchGIFs = async (offset: number = 0, query: string) => {
+    const res = await apiService.searchGIFs(query, offset, GIFBrowser.maxGIFPerLoad);
+    const paginationData: PaginationType = res?.data?.pagination;
+    const data = filterData(res?.data?.data);
+
+    localData.maxAvailableDataCount = paginationData.totalCount;
+    logConsole('maxAvailableDataCount: ' + paginationData.totalCount);
+
+    localData.gifData.push(...data);
+  };
+
   const loadMoreData = async () => {
     if (!isMoreDataAvailable()) {
       logConsole('No more data available to load!');
@@ -92,6 +104,14 @@ const MainFlowState = (navigation, apiService): MainFlowStateType => {
     await getTrendingData(localData.gifLoadingOffset);
   };
 
+  const onSearchGIF = async (query: string) => {
+    logConsole('Searching for ' + query);
+
+    resetLocalData();
+
+    await searchGIFs(localData.gifLoadingOffset, query);
+  };
+
   const getGIFData = () => localData.gifData;
 
   return {
@@ -100,6 +120,7 @@ const MainFlowState = (navigation, apiService): MainFlowStateType => {
     getTrendingData,
     getGIFData,
     loadMoreData,
+    onSearchGIF,
   };
 };
 
@@ -123,6 +144,7 @@ export const MainFlow = () => {
         <MainFlowNavigationStack.Screen
           name="GIFBrowserScreen"
           component={GIFBrowserScreen}
+          options={{ headerShown: false }}
         />
       </MainFlowNavigationStack.Navigator>
     </MainFlowContext.Provider>

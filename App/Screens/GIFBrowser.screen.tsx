@@ -1,5 +1,5 @@
-import React, { useContext, useEffect } from 'react';
-import { View, Text, Image, FlatList } from 'react-native';
+import React, { useContext, useEffect, useRef } from 'react';
+import { View, Text, Image, FlatList, TextInput, Button } from 'react-native';
 
 import { MainFlowContext, MainFlowStateType } from '../flow';
 import { GIFBrowser } from '../constants';
@@ -19,13 +19,39 @@ const GIFItem = ({ title, url }: GIFItemProps) => (
 function GIFBrowserScreen() {
   const mainFlow: MainFlowStateType = useContext(MainFlowContext);
   const gifData = mainFlow.getGIFData();
+  const searchInputRef = useRef<TextInput>(null);
 
   const onEndReached = async () => {
     await mainFlow.loadMoreData();
   };
 
+  const onChangeText = (text: string) => {
+    if (searchInputRef.current) {
+      searchInputRef.current.value = text;
+    }
+  };
+
+  const onSearch = async () => {
+    const query = searchInputRef?.current?.value;
+    if (query) {
+      await mainFlow.onSearchGIF(query);
+    }
+  };
+
   return (
     <View style={{ flex: 1, paddingVertical: 10 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', padding: 5 }}>
+        <TextInput
+          ref={searchInputRef}
+          style={{ height: 40, margin: 12, borderWidth: 1, padding: 10, flexGrow: 1 }}
+          placeholder="Search GIFs"
+          onChangeText={onChangeText}
+        />
+        <Button
+          title="Search"
+          onPress={onSearch}
+        />
+      </View>
       <FlatList
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
