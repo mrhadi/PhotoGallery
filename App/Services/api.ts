@@ -44,8 +44,8 @@ const ApiService = () => {
     }
   );
 
-  const getTrending = async () => {
-    const url = `trending?apiKey=${ENV.API_KEY}&limit=15`;
+  const getTrending = async (offset: number = 0,maxGIFPerLoad: number = 15) => {
+    const url = `trending?apiKey=${ENV.API_KEY}&offset=${offset}&limit=${maxGIFPerLoad}`;
     return client.get(url);
   };
 

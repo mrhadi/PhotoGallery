@@ -6,14 +6,18 @@ import SplashScreen from './Screens/Splash.screen';
 
 import ApiService from './Services/api';
 import { navigationRef } from './routing';
+import { GIFBrowser } from './constants';
+import { logConsole } from './Services/LogTracker';
 
 type GIFs = {
   url: string
   title: string
 }
 
-export type LocalDataType = {
-  gifData: Array<GIFs>
+type PaginationType = {
+  count: number
+  offset: number
+  totalCount: number
 }
 
 export type MainFlowStateType = {
@@ -21,10 +25,19 @@ export type MainFlowStateType = {
   getTrendingData: Function
   init: Function
   getGIFData: Function
+  loadMoreData: Function
+}
+
+export type LocalDataType = {
+  gifData: Array<GIFs>
+  gifLoadingOffset: number
+  maxAvailableDataCount: number | null
 }
 
 const localData: LocalDataType = {
   gifData: [],
+  gifLoadingOffset: 0,
+  maxAvailableDataCount: null,
 };
 
 const MainFlowNavigationStack = createNativeStackNavigator();
@@ -34,7 +47,14 @@ export const MainFlowContext = React.createContext<MainFlowStateType | null>(
 );
 
 const MainFlowState = (navigation, apiService): MainFlowStateType => {
+  const resetLocalData = () => {
+    localData.gifData = [];
+    localData.gifLoadingOffset = 0;
+    localData.maxAvailableDataCount = null;
+  };
+
   const init = () => {
+    resetLocalData();
     getTrendingData();
   };
 
@@ -47,11 +67,29 @@ const MainFlowState = (navigation, apiService): MainFlowStateType => {
     title: item?.title,
   }));
 
-  const getTrendingData = async () => {
-    const res = await apiService.getTrending();
+  const isMoreDataAvailable = () => localData.gifLoadingOffset + GIFBrowser.maxGIFPerLoad <= localData.maxAvailableDataCount;
+
+  const getTrendingData = async (offset: number = 0) => {
+    const res = await apiService.getTrending(offset, GIFBrowser.maxGIFPerLoad);
+    const paginationData: PaginationType = res?.data?.pagination;
     const data = filterData(res?.data?.data);
 
-    localData.gifData.push(data);
+    localData.maxAvailableDataCount = paginationData.totalCount;
+    logConsole('maxAvailableDataCount: ' + paginationData.totalCount);
+
+    localData.gifData.push(...data);
+  };
+
+  const loadMoreData = async () => {
+    if (!isMoreDataAvailable()) {
+      logConsole('No more data available to load!');
+      return;
+    }
+
+    localData.gifLoadingOffset = localData.gifLoadingOffset + GIFBrowser.maxGIFPerLoad;
+    logConsole('loadMoreData:offset: ' + localData.gifLoadingOffset);
+
+    await getTrendingData(localData.gifLoadingOffset);
   };
 
   const getGIFData = () => localData.gifData;
@@ -61,6 +99,7 @@ const MainFlowState = (navigation, apiService): MainFlowStateType => {
     onSplashScreenDone,
     getTrendingData,
     getGIFData,
+    loadMoreData,
   };
 };
 
