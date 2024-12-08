@@ -56,3 +56,7 @@ npm run ios
 yarn ios
 ```
 
+
+
+https://github.com/user-attachments/assets/f7e187c2-9b2e-4c90-9020-48f57caa1093
+
