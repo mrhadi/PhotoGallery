@@ -4,14 +4,17 @@ This is a sample React Native app to browse and display photos from Giphy.
 
 >**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions.
 
-## Step 1: Create the local ENV file
+## Step 1: Get your API Key
+Create a new API key on GIPHY developer website https://developers.giphy.com
+
+## Step 2: Create the local ENV file
 This app read some values from the local env file, create a new file as `.env` at project root folder and add these lines:
 ```bash
 BASE_API_URL=https://api.giphy.com/v1/gifs
-API_KEY=
+API_KEY=[your giphy api key]
 ```
 
-## Step 2: Install Dependencies
+## Step 3: Install Dependencies
 
 ```bash
 # using npm
@@ -21,7 +24,7 @@ npm setup
 yarn setup
 ```
 
-## Step 3: Start the Metro Server
+## Step 4: Start the Metro Server
 
 ```bash
 # using npm
@@ -31,7 +34,7 @@ npm start
 yarn start
 ```
 
-## Step 4: Start your Application
+## Step 5: Start your Application
 
 ### For Android
 
