@@ -9,12 +9,12 @@ import { navigationRef } from './routing';
 import { GIFBrowser } from './constants';
 import { logConsole } from './Services/LogTracker';
 
-type GIFs = {
-  url: string
+export type GIFItemType = {
   title: string
-}
+  url: string
+};
 
-type PaginationType = {
+export type PaginationType = {
   count: number
   offset: number
   totalCount: number
@@ -27,18 +27,23 @@ export type MainFlowStateType = {
   getGIFData: Function
   loadMoreData: Function
   onSearchGIF: Function
+  onResetSearch: Function
 }
 
 export type LocalDataType = {
-  gifData: Array<GIFs>
+  gifData: Array<GIFItemType>
   gifLoadingOffset: number
   maxAvailableDataCount: number | null
+  isSearching: boolean
+  searchQuery: string
 }
 
 const localData: LocalDataType = {
   gifData: [],
   gifLoadingOffset: 0,
   maxAvailableDataCount: null,
+  isSearching: false,
+  searchQuery: '',
 };
 
 const MainFlowNavigationStack = createNativeStackNavigator();
@@ -49,9 +54,11 @@ export const MainFlowContext = React.createContext<MainFlowStateType | null>(
 
 const MainFlowState = (navigation, apiService): MainFlowStateType => {
   const resetLocalData = () => {
-    localData.gifData = [];
+    localData.gifData.length = 0;
     localData.gifLoadingOffset = 0;
     localData.maxAvailableDataCount = null;
+    localData.isSearching = false;
+    localData.searchQuery = '';
   };
 
   const init = () => {
@@ -63,7 +70,7 @@ const MainFlowState = (navigation, apiService): MainFlowStateType => {
     navigation.navigate('GIFBrowserScreen');
   };
 
-  const filterData = (data: any): Array<GIFs> => data.map(item => ({
+  const filterData = (data: any): Array<GIFItemType> => data.map(item => ({
     url: item?.images?.fixedWidthStill?.url,
     title: item?.title,
   }));
@@ -101,7 +108,11 @@ const MainFlowState = (navigation, apiService): MainFlowStateType => {
     localData.gifLoadingOffset = localData.gifLoadingOffset + GIFBrowser.maxGIFPerLoad;
     logConsole('loadMoreData:offset: ' + localData.gifLoadingOffset);
 
-    await getTrendingData(localData.gifLoadingOffset);
+    if (localData.isSearching) {
+      await searchGIFs(localData.gifLoadingOffset, localData.searchQuery);
+    } else {
+      await getTrendingData(localData.gifLoadingOffset);
+    }
   };
 
   const onSearchGIF = async (query: string) => {
@@ -109,10 +120,29 @@ const MainFlowState = (navigation, apiService): MainFlowStateType => {
 
     resetLocalData();
 
-    await searchGIFs(localData.gifLoadingOffset, query);
+    if (query === '') {
+      localData.isSearching = false;
+      localData.searchQuery = '';
+
+      await getTrendingData();
+    } else {
+      localData.isSearching = true;
+      localData.searchQuery = query;
+
+      await searchGIFs(localData.gifLoadingOffset, query);
+    }
   };
 
-  const getGIFData = () => localData.gifData;
+  const onResetSearch = async () => {
+    resetLocalData();
+
+    localData.isSearching = false;
+    localData.searchQuery = '';
+
+    await getTrendingData();
+  };
+
+  const getGIFData = () => (localData.gifData);
 
   return {
     init,
@@ -121,6 +151,7 @@ const MainFlowState = (navigation, apiService): MainFlowStateType => {
     getGIFData,
     loadMoreData,
     onSearchGIF,
+    onResetSearch,
   };
 };
 
@@ -128,8 +159,6 @@ export const MainFlow = () => {
   const navigation = navigationRef;
   const apiService = ApiService();
   const mainFlowState: MainFlowStateType = MainFlowState(navigation, apiService);
-
-  console.log('MainFlow');
 
   mainFlowState.init();
 

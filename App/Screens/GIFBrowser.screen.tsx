@@ -1,15 +1,10 @@
-import React, { useContext, useEffect, useRef } from 'react';
-import { View, Text, Image, FlatList, TextInput, Button } from 'react-native';
+import React, { useContext, useRef, useState } from 'react';
+import { View, Text, Image, FlatList, TextInput, Button, Keyboard } from 'react-native';
 
-import { MainFlowContext, MainFlowStateType } from '../flow';
+import { MainFlowContext, MainFlowStateType, GIFItemType } from '../flow';
 import { GIFBrowser } from '../constants';
 
-type GIFItemProps = {
-  title: string
-  url: string
-};
-
-const GIFItem = ({ title, url }: GIFItemProps) => (
+const GIFItem = ({ title, url }: GIFItemType) => (
   <View style={{ paddingVertical: 10, alignItems: 'center', justifyContent: 'center' }}>
     <Text numberOfLines={3} style={{ marginBottom: 4 }}>{title}</Text>
     <Image source={{ uri: url }} style={{ width: GIFBrowser.gifWidth, height: GIFBrowser.gifHeight, marginBottom: 5 }} />
@@ -18,24 +13,34 @@ const GIFItem = ({ title, url }: GIFItemProps) => (
 
 function GIFBrowserScreen() {
   const mainFlow: MainFlowStateType = useContext(MainFlowContext);
+  const [searchMode, setSearchMode] = useState(false);
+  const [keyword, setKeyword] = useState('');
+
   const gifData = mainFlow.getGIFData();
   const searchInputRef = useRef<TextInput>(null);
+  const flatListRef = useRef<FlatList>(null);
 
   const onEndReached = async () => {
     await mainFlow.loadMoreData();
   };
 
   const onChangeText = (text: string) => {
-    if (searchInputRef.current) {
-      searchInputRef.current.value = text;
-    }
+    setKeyword(text);
   };
 
   const onSearch = async () => {
-    const query = searchInputRef?.current?.value;
-    if (query) {
-      await mainFlow.onSearchGIF(query);
-    }
+    Keyboard.dismiss();
+    flatListRef?.current?.scrollToOffset({ offset: 0, animated: true });
+
+    await mainFlow.onSearchGIF(keyword);
+    setSearchMode(!searchMode);
+  };
+
+  const onReset = async () => {
+    flatListRef?.current?.scrollToOffset({ offset: 0, animated: true });
+
+    await mainFlow.onResetSearch();
+    setKeyword('');
   };
 
   return (
@@ -46,13 +51,19 @@ function GIFBrowserScreen() {
           style={{ height: 40, margin: 12, borderWidth: 1, padding: 10, flexGrow: 1 }}
           placeholder="Search GIFs"
           onChangeText={onChangeText}
+          value={keyword}
         />
         <Button
           title="Search"
           onPress={onSearch}
         />
+        <Button
+          title="Reset"
+          onPress={onReset}
+        />
       </View>
       <FlatList
+        ref={flatListRef}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
         data={gifData}

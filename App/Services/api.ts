@@ -45,12 +45,12 @@ const ApiService = () => {
   );
 
   const getTrending = async (offset: number = 0, maxGIFPerLoad: number) => {
-    const url = `/trending?apiKey=${ENV.API_KEY}&offset=${offset}&limit=${maxGIFPerLoad}`;
+    const url = `/trending?api_key=${ENV.API_KEY}&offset=${offset}&limit=${maxGIFPerLoad}`;
     return client.get(url);
   };
 
   const searchGIFs = async (query: string, offset: number = 0, maxGIFPerLoad: number) => {
-    const url = `/search?apiKey=${ENV.API_KEY}&offset=${offset}&q=${query}&limit=${maxGIFPerLoad}`;
+    const url = `/search?api_key=${ENV.API_KEY}&offset=${offset}&q=${query}&limit=${maxGIFPerLoad}`;
     return client.get(url);
   };
 
