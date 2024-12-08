@@ -75,7 +75,7 @@ const MainFlowState = (navigation, apiService): MainFlowStateType => {
     title: item?.title,
   }));
 
-  const isMoreDataAvailable = () => localData.gifLoadingOffset + GIFBrowser.maxGIFPerLoad <= localData.maxAvailableDataCount;
+  const isMoreDataAvailable = () => localData.maxAvailableDataCount && (localData.gifLoadingOffset + GIFBrowser.maxGIFPerLoad <= localData.maxAvailableDataCount);
 
   const getTrendingData = async (offset: number = 0) => {
     const res = await apiService.getTrending(offset, GIFBrowser.maxGIFPerLoad);

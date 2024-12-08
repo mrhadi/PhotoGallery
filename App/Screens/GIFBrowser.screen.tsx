@@ -30,17 +30,18 @@ function GIFBrowserScreen() {
 
   const onSearch = async () => {
     Keyboard.dismiss();
-    flatListRef?.current?.scrollToOffset({ offset: 0, animated: true });
 
     await mainFlow.onSearchGIF(keyword);
     setSearchMode(!searchMode);
+
+    flatListRef?.current?.scrollToOffset({ offset: 0, animated: true });
   };
 
   const onReset = async () => {
-    flatListRef?.current?.scrollToOffset({ offset: 0, animated: true });
-
     await mainFlow.onResetSearch();
     setKeyword('');
+
+    flatListRef?.current?.scrollToOffset({ offset: 0, animated: true });
   };
 
   return (
